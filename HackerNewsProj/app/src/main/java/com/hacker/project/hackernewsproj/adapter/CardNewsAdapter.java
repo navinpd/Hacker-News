@@ -11,7 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.hacker.project.hackernewsproj.NewsData;
+import com.hacker.project.hackernewsproj.data.NewsData;
 import com.hacker.project.hackernewsproj.R;
 import com.hacker.project.hackernewsproj.activity.MainActivity;
 

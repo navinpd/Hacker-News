@@ -1,4 +1,4 @@
-package com.hacker.project.hackernewsproj;
+package com.hacker.project.hackernewsproj.data;
 
 /**
  * @author Navin Prasad <navin.prasad@fastacash.com>

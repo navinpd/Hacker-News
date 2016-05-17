@@ -11,6 +11,13 @@ import android.support.v7.app.AppCompatActivity;
 
 
 public class BaseActivity extends AppCompatActivity {
+    public static final String DATA_TYPE = "DATA_TYPE";
+    public static final String HACKER_NEWS = "HACKER_NEWS";
+    public static final String NEWS = "NEWS";
+    public static final String SHOW = "SHOW";
+    public static final String ASK = "ASK";
+    public static final String JOBS = "JOBS";
+    public static final String COMMENTS = "COMMENTS";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
