@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">HackerNewsProj</string>
+
+
+    <string name="hacker_news">Hacker News</string>
+    <string name="comments">Comments</string>
+    <string name="news">News</string>
+    <string name="show">Show</string>
+    <string name="ask">Ask</string>
+    <string name="jobs">Jobs</string>
+    <string name="submit">Submit</string>
+    <string name="log_out">Log Out</string>
+
+</resources>
