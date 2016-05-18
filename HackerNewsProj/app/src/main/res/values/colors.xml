@@ -6,4 +6,6 @@
 
     <color name="light_gray">#C8C8C8</color>
 
+    <color name="drawer_color">#F2F2F2</color>
+
 </resources>

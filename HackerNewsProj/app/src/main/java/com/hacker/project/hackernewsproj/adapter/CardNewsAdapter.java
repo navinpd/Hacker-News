@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.hacker.project.hackernewsproj.data.JsonData;
 import com.hacker.project.hackernewsproj.data.NewsData;
 import com.hacker.project.hackernewsproj.R;
 import com.hacker.project.hackernewsproj.activity.MainActivity;
@@ -20,12 +21,16 @@ import java.util.List;
 
 public class CardNewsAdapter extends RecyclerView.Adapter<CardHolder> {
 
-    private List<NewsData> mLinks;
+    private List<JsonData> mLinks;
     private Context mContext;
 
-    public CardNewsAdapter(Context context, List<NewsData> links) {
+    public CardNewsAdapter(Context context, List<JsonData> links) {
         mContext = context;
         mLinks = links;
+    }
+
+    public void addData(JsonData newData) {
+        mLinks.add(newData);
     }
 
     @Override
@@ -61,7 +66,7 @@ public class CardNewsAdapter extends RecyclerView.Adapter<CardHolder> {
     private void fillData(CardHolder holder, int position) {
         if (mLinks != null && mLinks.get(position) != null) {
 
-            NewsData data = mLinks.get(position);
+            NewsData data = JsonData.get(position);
             holder.urlLinkTV.setText(data.getUrlString());
             holder.commentsTV.setText(data.getComments());
             holder.newsTitleTV.setText(data.getHeading());

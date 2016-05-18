@@ -26,7 +26,7 @@
             android:layout_gravity="center_vertical"
             android:layout_margin="10dp"
             android:src="@drawable/friend_new"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -40,7 +40,7 @@
                 style="@style/sideMenuTxtStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
+                android:layout_marginBottom="22dp"
                 android:text="Navin Prasad"
                 android:textStyle="bold" />
 
@@ -49,9 +49,9 @@
                 style="@style/sideMenuTxtStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
                 android:layout_marginTop="0dp"
-                android:text="London United Kingdom" />
+                android:text="London United Kingdom"
+                android:visibility="gone" />
 
         </LinearLayout>
     </LinearLayout>
@@ -69,122 +69,88 @@
 
             <LinearLayout
                 android:id="@+id/ll_hacker_news"
-                style="@style/sideMenuItemMargin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                style="@style/sideMenuItemMargin">
 
                 <TextView
                     android:id="@+id/hacker_news"
                     style="@style/sideMenuTxtStyle"
-                    android:drawableLeft="@drawable/side_notification"
                     android:text="@string/hacker_news" />
 
+                <!--android:drawableLeft="@drawable/side_notification"-->
 
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/ll_news"
-                style="@style/sideMenuItemMargin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                style="@style/sideMenuItemMargin">
 
                 <TextView
                     android:id="@+id/tv_news"
                     style="@style/sideMenuTxtStyle"
-                    android:drawableLeft="@drawable/side_social"
                     android:text="@string/news" />
 
-
+                <!--android:drawableLeft="@drawable/side_social"-->
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/ll_show"
-                style="@style/sideMenuItemMargin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                style="@style/sideMenuItemMargin">
 
 
                 <TextView
                     android:id="@+id/tv_show"
                     style="@style/sideMenuTxtStyle"
-                    android:drawableLeft="@drawable/side_history"
                     android:text="@string/show" />
-
+                <!--android:drawableLeft="@drawable/side_history"-->
 
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/ll_ask"
-                style="@style/sideMenuItemMargin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                style="@style/sideMenuItemMargin">
 
 
                 <TextView
                     android:id="@+id/tv_ask"
                     style="@style/sideMenuTxtStyle"
-                    android:drawableLeft="@drawable/side_location"
                     android:text="@string/ask" />
 
-
+                <!--android:drawableLeft="@drawable/side_location"-->
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/ll_job"
-                style="@style/sideMenuItemMargin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                style="@style/sideMenuItemMargin">
 
                 <TextView
                     android:id="@+id/tv_job"
                     style="@style/sideMenuTxtStyle"
-                    android:drawableLeft="@drawable/side_faq"
                     android:text="@string/jobs" />
 
-
+                <!--android:drawableLeft="@drawable/side_faq"-->
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/ll_submit"
-                style="@style/sideMenuItemMargin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                style="@style/sideMenuItemMargin">
 
                 <TextView
                     android:id="@+id/tv_submit"
                     style="@style/sideMenuTxtStyle"
-                    android:drawableLeft="@drawable/side_contact"
                     android:text="@string/submit" />
 
-
+                <!--android:drawableLeft="@drawable/side_contact"-->
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/ll_logout"
-                style="@style/sideMenuItemMargin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                style="@style/sideMenuItemMargin">
 
                 <TextView
                     android:id="@+id/tv_log_out"
                     style="@style/sideMenuTxtStyle"
-                    android:drawableLeft="@drawable/side_logout"
                     android:text="@string/log_out" />
-
+                <!--android:drawableLeft="@drawable/side_logout"-->
 
             </LinearLayout>
         </LinearLayout>
