@@ -51,7 +51,7 @@ public class FullNewsActivity extends BaseActivity {
         webview.setWebViewClient(
                 new SSLTolerentWebViewClient()
         );
-        webview.loadUrl("http://www.waitrose.com/");
+        webview.loadUrl(webURL);
     }
 
 

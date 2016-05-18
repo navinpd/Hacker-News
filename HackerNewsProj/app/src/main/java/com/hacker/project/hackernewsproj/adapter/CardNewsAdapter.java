@@ -11,11 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.hacker.project.hackernewsproj.data.JsonData;
-import com.hacker.project.hackernewsproj.data.NewsData;
 import com.hacker.project.hackernewsproj.R;
 import com.hacker.project.hackernewsproj.activity.MainActivity;
+import com.hacker.project.hackernewsproj.data.JsonData;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -26,11 +26,18 @@ public class CardNewsAdapter extends RecyclerView.Adapter<CardHolder> {
 
     public CardNewsAdapter(Context context, List<JsonData> links) {
         mContext = context;
-        mLinks = links;
+        if (links != null)
+            mLinks = links;
+        else
+            mLinks = new ArrayList<>();
     }
 
     public void addData(JsonData newData) {
         mLinks.add(newData);
+    }
+
+    public String getURL(int position) {
+        return mLinks.get(position).getUrl();
     }
 
     @Override
@@ -59,19 +66,22 @@ public class CardNewsAdapter extends RecyclerView.Adapter<CardHolder> {
 
     @Override
     public int getItemCount() {
-        return 10;
+        if (mLinks != null && mLinks.size() > 0)
+            return mLinks.size();
+        else
+            return 0;
     }
 
     //set name, image and channel
     private void fillData(CardHolder holder, int position) {
         if (mLinks != null && mLinks.get(position) != null) {
 
-            NewsData data = JsonData.get(position);
-            holder.urlLinkTV.setText(data.getUrlString());
-            holder.commentsTV.setText(data.getComments());
-            holder.newsTitleTV.setText(data.getHeading());
-            holder.timeDurationTV.setText(String.valueOf(data.getTimePassed()));
-            holder.authorTV.setText(data.getAuthorName());
+            JsonData data = mLinks.get(position);
+            holder.urlLinkTV.setText(data.getUrl());
+            holder.commentsTV.setText(data.getDescendants().toString());
+            holder.newsTitleTV.setText(data.getTitle());
+            holder.timeDurationTV.setText(String.valueOf(data.getTime()));
+            holder.authorTV.setText(data.getBy());
         }
     }
 

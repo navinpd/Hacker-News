@@ -1,5 +1,6 @@
 package com.hacker.project.hackernewsproj.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -30,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter<?> mAdapter;
+    private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     private LinearLayout hackerNewsLayout;
@@ -47,7 +48,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private Firebase preURL;
     private Firebase mainURL;
     private ArrayList<Long> submissionIDs;
-    int loadedSubmissions = -1;
+    int loadedSubmissions = 0;
+    int submissionUpdateNum = 15;
+
+    ProgressDialog progressDialog;
 
 
     @Override
@@ -55,12 +59,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setUpLayout();
+
         preURL = new Firebase(Constants.BASE_URL);
         mainURL = preURL.child("/topstories");
 
         mAdapter = new CardNewsAdapter(this, null);
         mRecyclerView.setAdapter(mAdapter);
 
+        updateSubmissions();
 
     }
 
@@ -74,6 +80,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     public void updateSubmissions() {
         if (submissionIDs == null) {
+            progressDialog.show();
 
             mainURL.addListenerForSingleValueEvent(new ValueEventListener() {
 
@@ -85,7 +92,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     updateSubmissions();
 
                     // Hide the progress bar
-//                    progress.setVisibility(View.GONE);
+                    progressDialog.dismiss();
 //                    footer.setVisibility(View.VISIBLE);
                 }
 
@@ -117,7 +124,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     // Gets an url to a single submission and updates it in the feedadapter
     public void updateSingleSubmission(final Long submissionId) {
 
-        Firebase submission = mainURL.child("/item/" + submissionId);
+        Firebase submission = new Firebase("https://hacker-news.firebaseio.com/v0/item/" + submissionId);
 
         submission.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -143,8 +150,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
 
                 JsonData f = initNewFeedItem(submissionId, ret, site);
-                feedAdapter.add(f);
-                feedAdapter.notifyDataSetChanged();
+                ((CardNewsAdapter) mAdapter).addData(f);
+                mAdapter.notifyDataSetChanged();
 
 //                if (site != null) {
 //                    // Asynchronously updates images for the feed item
@@ -253,7 +260,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.comment_holder:
             case R.id.url_holder:
             case R.id.news_title_tv:
+                int position = (int) v.getTag();
                 intent = new Intent(MainActivity.this, FullNewsActivity.class);
+                intent.putExtra("URL", ((CardNewsAdapter) mAdapter).getURL(position));
                 break;
 
         }
@@ -287,6 +296,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         logOutLayout = (LinearLayout) findViewById(R.id.ll_logout);
         mRecyclerView = (RecyclerView) findViewById(R.id.news_list);
         mDrawer = (View) findViewById(R.id.navigation_drawer);
+        progressDialog = new ProgressDialog(MainActivity.this);
 
         hackerNewsLayout.setOnClickListener(this);
         newsLayout.setOnClickListener(this);
@@ -311,6 +321,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //        mDrawerLayout.setScrimColor(Color.TRANSPARENT);
         mDrawerLayout.closeDrawer(mDrawer);
         mDrawerLayout.addDrawerListener(drawerListener);
+        Firebase.setAndroidContext(getApplicationContext());
+
     }
 
     DrawerLayout.DrawerListener drawerListener = new DrawerLayout.DrawerListener() {
