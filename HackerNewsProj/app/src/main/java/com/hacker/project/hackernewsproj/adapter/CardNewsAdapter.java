@@ -40,6 +40,10 @@ public class CardNewsAdapter extends RecyclerView.Adapter<CardHolder> {
         return mLinks.get(position).getUrl();
     }
 
+    public JsonData getData(int position) {
+        return mLinks.get(position);
+    }
+
     @Override
     public CardHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/title_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="Google supercharges machine learning tasks with TPU cushon chip"
+            android:textColor="#101010"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/time_text"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title_text"
+            android:layout_marginLeft="30dp"
+            android:drawableLeft="@drawable/time_clock"
+            android:drawableTint="@color/light_gray"
+            android:gravity="center_vertical"
+            android:text="2 hr" />
+
+        <TextView
+            android:id="@+id/comment_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title_text"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@id/time_text"
+            android:drawableLeft="@drawable/comment_image"
+            android:drawableTint="@color/light_gray"
+            android:gravity="center_vertical"
+            android:text="18" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.1dp"
+            android:layout_below="@id/comment_number"
+            android:layout_marginTop="5dp"
+            android:background="@android:color/darker_gray" />
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/comment_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="5dp">
+
+    </android.support.v7.widget.RecyclerView>
+
+</LinearLayout>

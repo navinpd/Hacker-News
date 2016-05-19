@@ -1,12 +1,15 @@
 
 package com.hacker.project.hackernewsproj.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class JsonData {
+public class JsonData implements Parcelable{
 
     private String by;
     private Long descendants;
@@ -21,6 +24,23 @@ public class JsonData {
     private String url;
     private Integer parent;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
+    public JsonData (Parcel data) {
+        this.by = data.readString();
+        this.descendants = data.readLong();
+        this.id = data.readLong();
+        this.score = data.readLong();
+        this.title = data.readString();
+        this.text = data.readString();
+        this.time = data.readString();
+        this.url = data.readString();
+        this.parent = data.readInt();
+        this.type = data.readString();
+    }
+
+    public JsonData (){
+
+    }
 
     /**
      * 
@@ -245,5 +265,35 @@ public class JsonData {
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.id);
+        dest.writeString(this.title);
+        dest.writeString(this.by);
+        dest.writeString(this.text);
+        dest.writeLong(this.score);
+        dest.writeLong(this.descendants);
+        dest.writeString(this.time);
+        dest.writeString(this.type);
+        dest.writeString(this.url);
+        dest.writeInt(this.parent);
+    }
+
+
+    public static final Creator<JsonData> CREATOR = new Creator<JsonData>() {
+        public JsonData createFromParcel(Parcel source) {
+            return new JsonData(source);
+        }
+
+        public JsonData[] newArray(int size) {
+            return new JsonData[size];
+        }
+    };
 
 }

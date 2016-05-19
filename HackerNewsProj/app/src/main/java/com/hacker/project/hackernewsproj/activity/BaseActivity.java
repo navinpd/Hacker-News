@@ -19,6 +19,8 @@ public class BaseActivity extends AppCompatActivity {
     public static final String JOBS = "JOBS";
     public static final String COMMENTS = "COMMENTS";
 
+    public static final String JSON_DATA = "JSON_DATA";
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

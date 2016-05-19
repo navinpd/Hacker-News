@@ -17,15 +17,14 @@ import com.hacker.project.hackernewsproj.R;
 import com.hacker.project.hackernewsproj.adapter.CardNewsAdapter;
 import com.hacker.project.hackernewsproj.data.Constants;
 import com.hacker.project.hackernewsproj.data.JsonData;
+import com.hacker.project.hackernewsproj.data.Utils;
 
 import org.androidannotations.annotations.EActivity;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @EActivity(R.layout.activity_main)
 public class MainActivity extends BaseActivity implements View.OnClickListener {
@@ -169,12 +168,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     // Takes the raw API data and the URL, returns a new feed item
     public JsonData initNewFeedItem(Long submissionId, Map<String, Object> ret, URL site) {
 
-        JsonData f = new JsonData();
+        JsonData f = (JsonData) ret;
 
         f.setId(submissionId);
 
         // Gets readable date
-        String time = updateDate((Long) ret.get("time"));
+        String time = Utils.updateDate((String) ret.get("time"));
 
         // Set titles and other data
         f.setTitle((String) ret.get("title"));
@@ -212,28 +211,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         return f;
     }
 
-    // Converts the difference between two dates into a date
-    public String updateDate(Long time) {
-
-        Date past = new Date(time * 1000);
-        Date now = new Date();
-
-        if (TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) > 0) {
-            return TimeUnit.MILLISECONDS.toDays(now.getTime() - past.getTime()) + "d";
-        } else if (TimeUnit.MILLISECONDS.toHours(now.getTime() - past.getTime()) > 0) {
-            return TimeUnit.MILLISECONDS.toHours(now.getTime() - past.getTime()) + "h";
-        }
-        if (TimeUnit.MILLISECONDS.toMinutes(now.getTime() - past.getTime()) > 0) {
-            return TimeUnit.MILLISECONDS.toMinutes(now.getTime() - past.getTime()) + "m";
-        } else {
-            return TimeUnit.MILLISECONDS.toSeconds(now.getTime() - past.getTime()) + "s";
-        }
-    }
 
     @Override
     public void onClick(View v) {
 
         Intent intent = null/* = new Intent(MainActivity.this, MainActivity.class)*/;
+        int position = (int) v.getTag();
 
         switch (v.getId()) {
             case R.id.ll_hacker_news:
@@ -258,9 +241,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //                intent.putExtra(DATA_TYPE, LOG);
                 break;
             case R.id.comment_holder:
+                intent = new Intent(MainActivity.this, CommentsActivity.class);
+                intent.putExtra(JSON_DATA, ((CardNewsAdapter) mAdapter).getData(position));
+                break;
+
             case R.id.url_holder:
             case R.id.news_title_tv:
-                int position = (int) v.getTag();
                 intent = new Intent(MainActivity.this, FullNewsActivity.class);
                 intent.putExtra("URL", ((CardNewsAdapter) mAdapter).getURL(position));
                 break;
