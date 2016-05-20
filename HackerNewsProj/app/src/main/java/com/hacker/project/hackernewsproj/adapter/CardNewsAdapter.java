@@ -23,6 +23,7 @@ public class CardNewsAdapter extends RecyclerView.Adapter<CardHolder> {
 
     private List<JsonData> mLinks;
     private Context mContext;
+    MainActivity activity;
 
     public CardNewsAdapter(Context context, List<JsonData> links) {
         mContext = context;
@@ -30,6 +31,7 @@ public class CardNewsAdapter extends RecyclerView.Adapter<CardHolder> {
             mLinks = links;
         else
             mLinks = new ArrayList<>();
+        activity = (MainActivity) mContext;
     }
 
     public void addData(JsonData newData) {
@@ -56,7 +58,6 @@ public class CardNewsAdapter extends RecyclerView.Adapter<CardHolder> {
     @Override
     public void onBindViewHolder(CardHolder holder, int position) {
 
-        MainActivity activity = (MainActivity) mContext;
         holder.urlHolder.setTag(position);
         holder.newsTitleTV.setTag(position);
         holder.commentHolder.setTag(position);

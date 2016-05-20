@@ -12,7 +12,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.hacker.project.hackernewsproj.R;
-import com.hacker.project.hackernewsproj.adapter.CardNewsAdapter;
+import com.hacker.project.hackernewsproj.adapter.CommentsAdapter;
 import com.hacker.project.hackernewsproj.data.JsonData;
 import com.hacker.project.hackernewsproj.data.Utils;
 
@@ -33,8 +33,9 @@ public class CommentsActivity extends BaseActivity {
     private long id;
     private ArrayList<Long> submissionIDs;
 
+    String title, comment, time, submissionId;
+
     RecyclerView commentsList;
-    JsonData jsonData;
 
     ProgressDialog progressDialog;
     int loadedSubmissions = 0;
@@ -48,7 +49,9 @@ public class CommentsActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
-        jsonData = (JsonData) getIntent().getParcelableExtra(JSON_DATA);
+        title = (String) getIntent().getStringExtra("TITLE");
+
+
         setUpLayout();
 
 
@@ -61,9 +64,10 @@ public class CommentsActivity extends BaseActivity {
 
     public void updateSubmissions() {
         if (submissionIDs == null) {
-            progressDialog.show();
+            if (progressDialog != null && progressDialog.isShowing())
+                progressDialog.show();
 
-            Firebase mainURL = new Firebase("https://hacker-news.firebaseio.com/v0/item/"+id);
+            Firebase mainURL = new Firebase("https://hacker-news.firebaseio.com/v0/item/" + id);
 
             mainURL.addListenerForSingleValueEvent(new ValueEventListener() {
 
@@ -119,7 +123,7 @@ public class CommentsActivity extends BaseActivity {
                 }
 
                 JsonData f = initNewFeedItem(submissionId, ret);
-                ((CardNewsAdapter) mAdapter).addData(f);
+                ((CommentsAdapter) mAdapter).addToList(f);
                 mAdapter.notifyDataSetChanged();
 
             }
@@ -167,8 +171,6 @@ public class CommentsActivity extends BaseActivity {
         commentCounts.setText(String.valueOf(jsonData.getScore()));
         id = jsonData.getId();
 
-
-
     }
 
     private void setUpLayout() {
@@ -190,8 +192,8 @@ public class CommentsActivity extends BaseActivity {
             }
         });
 
-        mAdapter =
-
+        mAdapter = new CommentsAdapter(CommentsActivity.this, null);
+        commentsList.setAdapter(mAdapter);
 
     }
 }

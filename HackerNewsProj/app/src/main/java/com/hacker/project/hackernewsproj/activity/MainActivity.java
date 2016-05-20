@@ -168,12 +168,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     // Takes the raw API data and the URL, returns a new feed item
     public JsonData initNewFeedItem(Long submissionId, Map<String, Object> ret, URL site) {
 
-        JsonData f = (JsonData) ret;
+        JsonData f = new JsonData();
 
         f.setId(submissionId);
 
         // Gets readable date
-        String time = Utils.updateDate((String) ret.get("time"));
+        String time = Utils.updateDate(ret.get("time").toString());
 
         // Set titles and other data
         f.setTitle((String) ret.get("title"));

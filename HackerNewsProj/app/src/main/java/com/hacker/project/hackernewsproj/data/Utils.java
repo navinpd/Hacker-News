@@ -13,6 +13,8 @@ public class Utils {
 
     // Converts the difference between two dates into a date
     public static String updateDate(String time) {
+        if (time == null)
+            return "";
 
         Long ti = Long.decode(time);
 
