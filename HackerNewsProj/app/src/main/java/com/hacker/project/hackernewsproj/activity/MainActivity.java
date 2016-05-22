@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -24,6 +26,7 @@ import org.androidannotations.annotations.EActivity;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @EActivity(R.layout.activity_main)
@@ -47,20 +50,31 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private Firebase preURL;
     private Firebase mainURL;
     private ArrayList<Long> submissionIDs;
-    int loadedSubmissions = 0;
-    int submissionUpdateNum = 15;
+    private int loadedSubmissions = 0;
+    private int submissionUpdateNum = 15;
 
     ProgressDialog progressDialog;
+
+    String headerType;
+    String headerText;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        headerType = getIntent().getStringExtra(DATA_TYPE);
+        if (headerType == null || headerType.isEmpty())
+            headerType = "topstories";
+
+        headerText = headerType.substring(0, headerType.length() - "substories".length());
+
         setUpLayout();
 
         preURL = new Firebase(Constants.BASE_URL);
-        mainURL = preURL.child("/topstories");
+        mainURL = preURL.child("/" + headerType);
 
         mAdapter = new CardNewsAdapter(this, null);
         mRecyclerView.setAdapter(mAdapter);
@@ -77,6 +91,25 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        menu.getItem(0).getSubMenu().getItem(4).setVisible(true);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_refresh) {
+            submissionIDs = null;
+            loadedSubmissions = 0;
+            ((CardNewsAdapter) mAdapter).clearData();
+            updateSubmissions();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     public void updateSubmissions() {
         if (submissionIDs == null) {
             progressDialog.show();
@@ -86,7 +119,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
                     submissionIDs = (ArrayList<Long>) snapshot.getValue();
-
+                    loadedSubmissions = 0;
                     // Because we are doing this asynchronously, it's easier to update submissions directly
                     updateSubmissions();
 
@@ -104,20 +137,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
             });
         } else {
+            loadSubmissions();
+        }
+    }
 
-            // We cannot use feedAdapter.getCount() directly since that may lead to race conditions
-            int start = loadedSubmissions;
+    private void loadSubmissions() {
 
-            // From the top 500 submissions, we only load a few at a time
-            for (; loadedSubmissions < start + submissionUpdateNum && loadedSubmissions < submissionIDs.size(); loadedSubmissions++) {
-                // But we must first add each submission to the view manually
-                updateSingleSubmission(submissionIDs.get(loadedSubmissions));
-            }
+        // We cannot use feedAdapter.getCount() directly since that may lead to race conditions
+        int start = loadedSubmissions;
+
+        // From the top 500 submissions, we only load a few at a time
+        for (; loadedSubmissions < start + submissionUpdateNum && loadedSubmissions < submissionIDs.size(); loadedSubmissions++) {
+            // But we must first add each submission to the view manually
+            updateSingleSubmission(submissionIDs.get(loadedSubmissions));
+        }
 
 //            if (loadedSubmissions == submissionIDs.size()) {
 //                no_submissions.setVisibility(View.VISIBLE);
 //            }
-        }
     }
 
     // Gets an url to a single submission and updates it in the feedadapter
@@ -171,6 +208,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         JsonData f = new JsonData();
 
         f.setId(submissionId);
+        f.setKids((List<Integer>) ret.get("kids"));
 
         // Gets readable date
         String time = Utils.updateDate(ret.get("time").toString());
@@ -215,8 +253,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
 
-        Intent intent = null/* = new Intent(MainActivity.this, MainActivity.class)*/;
-        int position = (int) v.getTag();
+        Intent intent = new Intent(MainActivity.this, MainActivity.class);
+        int position = 0;
+        if (v.getTag() != null)
+            position = (int) v.getTag();
 
         switch (v.getId()) {
             case R.id.ll_hacker_news:
@@ -242,7 +282,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.comment_holder:
                 intent = new Intent(MainActivity.this, CommentsActivity.class);
-                intent.putExtra(JSON_DATA, ((CardNewsAdapter) mAdapter).getData(position));
+                Bundle bundle = new Bundle();
+                bundle.putString("DESCENDANTS", ((CardNewsAdapter) mAdapter).getData(position).getDescendants().toString());
+                bundle.putIntegerArrayList("KIDS", (ArrayList<Integer>) ((CardNewsAdapter) mAdapter).getData(position).getKids());
+                bundle.putLong("ID", ((CardNewsAdapter) mAdapter).getData(position).getId());
+                bundle.putString("TIME", ((CardNewsAdapter) mAdapter).getData(position).getTime());
+                bundle.putString("TITLE", ((CardNewsAdapter) mAdapter).getData(position).getTitle());
+                bundle.putString("AUTHOR", ((CardNewsAdapter) mAdapter).getData(position).getBy());
+                intent.putExtra("BUNDLE", bundle);
                 break;
 
             case R.id.url_holder:
@@ -251,9 +298,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 intent.putExtra("URL", ((CardNewsAdapter) mAdapter).getURL(position));
                 break;
 
+            case R.id.click_to_load:
+                intent = null;
+                loadSubmissions();
+                break;
+
         }
-        startActivity(intent);
-        closeDrawer();
+        if (intent != null) {
+            startActivity(intent);
+            closeDrawer();
+        }
+
     }
 
     @Override
@@ -283,6 +338,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mRecyclerView = (RecyclerView) findViewById(R.id.news_list);
         mDrawer = (View) findViewById(R.id.navigation_drawer);
         progressDialog = new ProgressDialog(MainActivity.this);
+        progressDialog.setMessage("Loading");
+        progressDialog.setCancelable(false);
 
         hackerNewsLayout.setOnClickListener(this);
         newsLayout.setOnClickListener(this);
@@ -301,10 +358,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         });
 
-
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         mDrawerLayout.setFocusableInTouchMode(false);
-//        mDrawerLayout.setScrimColor(Color.TRANSPARENT);
         mDrawerLayout.closeDrawer(mDrawer);
         mDrawerLayout.addDrawerListener(drawerListener);
         Firebase.setAndroidContext(getApplicationContext());

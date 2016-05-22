@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.firebase.client.DataSnapshot;
@@ -17,6 +19,7 @@ import com.hacker.project.hackernewsproj.data.JsonData;
 import com.hacker.project.hackernewsproj.data.Utils;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,20 +29,21 @@ import java.util.Map;
 
 
 public class CommentsActivity extends BaseActivity {
-    TextView titleText;
-    TextView timeText;
-    TextView authorText;
-    TextView commentCounts;
+    private TextView titleText;
+    private TextView timeText;
+    private TextView authorText;
+    private TextView commentCounts;
+    private TextView noCommentText;
+    private ArrayList<Long> commentIds;
+
+    private String title, time, author, commentCount;
     private long id;
-    private ArrayList<Long> submissionIDs;
 
-    String title, comment, time, submissionId;
+    private RecyclerView commentsList;
 
-    RecyclerView commentsList;
-
-    ProgressDialog progressDialog;
-    int loadedSubmissions = 0;
-    int submissionUpdateNum = 15;
+    private ProgressDialog progressDialog;
+    private int loadedSubmissions = 0;
+    private int submissionUpdateNum = 15;
 
 
     private RecyclerView.Adapter mAdapter;
@@ -49,63 +53,49 @@ public class CommentsActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
-        title = (String) getIntent().getStringExtra("TITLE");
+        Bundle bundle = getIntent().getBundleExtra("BUNDLE");
 
+
+        author = bundle.getString("AUTHOR");
+        title = bundle.getString("TITLE");
+        time = bundle.getString("TIME");
+        id = bundle.getLong("ID", -1);
+        commentIds = (ArrayList<Long>) bundle.get("KIDS");
+        commentCount = bundle.getString("DESCENDANTS");
 
         setUpLayout();
 
-
-        fillLayout();
+        fillMainLayout();
 
         updateSubmissions();
 
     }
 
-
     public void updateSubmissions() {
-        if (submissionIDs == null) {
-            if (progressDialog != null && progressDialog.isShowing())
-                progressDialog.show();
-
-            Firebase mainURL = new Firebase("https://hacker-news.firebaseio.com/v0/item/" + id);
-
-            mainURL.addListenerForSingleValueEvent(new ValueEventListener() {
-
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    submissionIDs = (ArrayList<Long>) snapshot.getValue();
-
-                    // Because we are doing this asynchronously, it's easier to update submissions directly
-                    updateSubmissions();
-
-                    // Hide the progress bar
-                    progressDialog.dismiss();
-//                    footer.setVisibility(View.VISIBLE);
-                }
-
-                @Override
-                public void onCancelled(FirebaseError firebaseError) {
-                    System.err.println("Could not retrieve posts! " + firebaseError);
-//                    no_submissions.setVisibility(View.VISIBLE);
-//                    progress.setVisibility(View.GONE);
-//                    footer.setVisibility(View.GONE);
-                }
-            });
+        if (commentIds == null || commentIds.size() == 0) {
+            noCommentText.setVisibility(View.VISIBLE);
+            commentsList.setVisibility(View.GONE);
         } else {
+            callSingleItems();
+            noCommentText.setVisibility(View.GONE);
+            commentsList.setVisibility(View.VISIBLE);
+        }
+    }
 
-            // We cannot use feedAdapter.getCount() directly since that may lead to race conditions
-            int start = loadedSubmissions;
+    private void callSingleItems() {
 
-            // From the top 500 submissions, we only load a few at a time
-            for (; loadedSubmissions < start + submissionUpdateNum && loadedSubmissions < submissionIDs.size(); loadedSubmissions++) {
-                // But we must first add each submission to the view manually
-                updateSingleSubmission(submissionIDs.get(loadedSubmissions));
-            }
+        // We cannot use feedAdapter.getCount() directly since that may lead to race conditions
+        int start = loadedSubmissions;
 
-//            if (loadedSubmissions == submissionIDs.size()) {
+        // From the top 500 submissions, we only load a few at a time
+        for (; loadedSubmissions < start + submissionUpdateNum && loadedSubmissions < commentIds.size(); loadedSubmissions++) {
+            // But we must first add each submission to the view manually
+            updateSingleSubmission(commentIds.get(loadedSubmissions));
+        }
+
+//            if (loadedSubmissions == commentIds.size()) {
 //                no_submissions.setVisibility(View.VISIBLE);
 //            }
-        }
     }
 
     public void updateSingleSubmission(final Long submissionId) {
@@ -138,12 +128,13 @@ public class CommentsActivity extends BaseActivity {
     // Takes the raw API data and the URL, returns a new feed item
     public JsonData initNewFeedItem(Long submissionId, Map<String, Object> ret) {
 
-        JsonData f = (JsonData) ret;
+        JsonData f = new JsonData();;
 
         f.setId(submissionId);
+        f.setKids((List<Integer>) ret.get("kids"));
 
         // Gets readable date
-        String time = Utils.updateDate((String) ret.get("time"));
+        String time = Utils.updateDate(ret.get("time").toString());
 
         // Set titles and other data
         f.setTitle((String) ret.get("title"));
@@ -165,23 +156,24 @@ public class CommentsActivity extends BaseActivity {
         return f;
     }
 
-    private void fillLayout() {
-        timeText.setText(Utils.updateDate(jsonData.getTime()));
-        titleText.setText(String.valueOf(jsonData.getTitle()));
-        commentCounts.setText(String.valueOf(jsonData.getScore()));
-        id = jsonData.getId();
-
+    private void fillMainLayout() {
+        timeText.setText(time);
+        titleText.setText(String.valueOf(title));
+        authorText.setText(author);
+        commentCounts.setText(commentCount);
     }
 
     private void setUpLayout() {
         titleText = (TextView) findViewById(R.id.title_text);
         timeText = (TextView) findViewById(R.id.time_text);
         commentsList = (RecyclerView) findViewById(R.id.comment_list);
-//        authorText = (TextView) findViewById(R.id.writer_tv);
+        authorText = (TextView) findViewById(R.id.author_text);
         commentCounts = (TextView) findViewById(R.id.comment_number);
+        noCommentText = (TextView) findViewById(R.id.no_comment_tv);
 
         progressDialog = new ProgressDialog(CommentsActivity.this);
         progressDialog.setMessage("Loading");
+        progressDialog.setCancelable(false);
 
         layoutManager = new LinearLayoutManager(this);
         commentsList.setLayoutManager(layoutManager);

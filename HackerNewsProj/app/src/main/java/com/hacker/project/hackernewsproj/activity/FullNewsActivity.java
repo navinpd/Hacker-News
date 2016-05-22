@@ -3,15 +3,12 @@ package com.hacker.project.hackernewsproj.activity;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.view.Window;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
 
 import com.hacker.project.hackernewsproj.R;
 
@@ -19,10 +16,10 @@ import com.hacker.project.hackernewsproj.R;
  * Created by Navin on 17/05/16.
  */
 public class FullNewsActivity extends BaseActivity {
-    WebView webview;
-    final Activity activity = this;
-    String webURL;
-    ProgressDialog dialog;
+    private WebView webview;
+    private final Activity activity = this;
+    private String webURL;
+    private ProgressDialog progressDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,14 +61,16 @@ public class FullNewsActivity extends BaseActivity {
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            dialog.dismiss();
+            progressDialog.dismiss();
             super.onPageFinished(view, url);
         }
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            dialog = new ProgressDialog(FullNewsActivity.this);
-            dialog.show();
+            progressDialog = new ProgressDialog(FullNewsActivity.this);
+            progressDialog.setMessage("Loading");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
             super.onPageStarted(view, url, favicon);
 
         }

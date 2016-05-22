@@ -12,14 +12,12 @@ import android.support.v7.app.AppCompatActivity;
 
 public class BaseActivity extends AppCompatActivity {
     public static final String DATA_TYPE = "DATA_TYPE";
-    public static final String HACKER_NEWS = "HACKER_NEWS";
-    public static final String NEWS = "NEWS";
-    public static final String SHOW = "SHOW";
-    public static final String ASK = "ASK";
-    public static final String JOBS = "JOBS";
-    public static final String COMMENTS = "COMMENTS";
-
-    public static final String JSON_DATA = "JSON_DATA";
+    public static final String HACKER_NEWS = "topstories";
+    public static final String NEWS = "newstories";
+    public static final String SHOW = "showstories";
+    public static final String ASK = "askstories";
+    public static final String JOBS = "jobstories";
+    public static final String COMMENTS = "comments";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

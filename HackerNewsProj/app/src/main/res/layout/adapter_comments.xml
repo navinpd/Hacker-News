@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="2dp"
     android:orientation="horizontal">
 
     <View
@@ -23,6 +22,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
+            android:drawableLeft="@drawable/man_drawable"
+            android:gravity="center_vertical"
             android:text="ANDRE" />
 
 
@@ -30,8 +31,10 @@
             android:id="@+id/comment_time_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="50dp"
-            android:layout_toRightOf="@id/comment_writer_tv"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="30dp"
+            android:drawableLeft="@drawable/ic_hourglass_empty_black_24dp"
+            android:gravity="center_vertical"
             android:text="5 hrs" />
 
         <TextView
@@ -40,7 +43,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginRight="20dp"
-            android:text="45" />
+            android:text="45"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/comment_tv"

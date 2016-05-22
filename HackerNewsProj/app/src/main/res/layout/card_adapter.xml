@@ -4,6 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <TextView
+        android:id="@+id/click_to_load"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_corner"
+        android:gravity="center_horizontal"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:text="See More"
+        android:textSize="19sp"
+        android:visibility="gone" />
+
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -44,8 +56,7 @@
                 <RelativeLayout
                     android:id="@+id/url_holder"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1.5">
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:id="@+id/hard_url_tv"
@@ -53,53 +64,63 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
                         android:maxLines="2"
-                        android:text="https://www.facebook.com/sarcasmLOL/photos/a.1521463861515726.1073741828.1515871602074952/1608595299469248/?type=3"
+                        android:text="https://www.facebook.com/photos/a.1521463861515726.1073741828.1515871602074952/1608595299469248/?type=3"
                         android:textColor="@android:color/darker_gray"
                         android:textSize="16sp" />
 
-                    <TextView
-                        android:id="@+id/author_tv"
-                        android:layout_width="wrap_content"
+                    <RelativeLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_above="@id/hard_url_tv"
-                        android:lines="1"
-                        android:text="author"
-                        android:textColor="@android:color/darker_gray"
-                        android:textSize="16sp" />
+                        android:layout_above="@id/hard_url_tv">
 
-                    <TextView
-                        android:id="@+id/time_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_above="@id/hard_url_tv"
-                        android:layout_marginLeft="20dp"
-                        android:layout_toRightOf="@id/author_tv"
-                        android:lines="1"
-                        android:text="7hrs"
-                        android:textColor="@android:color/darker_gray"
-                        android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/author_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            android:layout_alignParentLeft="true"
+                            android:drawableLeft="@drawable/man_drawable"
+                            android:gravity="center_vertical"
+                            android:lines="1"
+                            android:text="author"
+                            android:textColor="@android:color/darker_gray"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/time_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="24dp"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerInParent="true"
+                            android:drawableLeft="@drawable/ic_hourglass_empty_black_24dp"
+                            android:gravity="center_vertical"
+                            android:lines="1"
+                            android:text="7hrs"
+                            android:textColor="@android:color/darker_gray"
+                            android:textSize="16sp" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true">
+
+                            <TextView
+                                android:id="@+id/comment_holder"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawableLeft="@drawable/comment_image"
+                                android:gravity="center_vertical"
+                                android:lines="1"
+                                android:text="167"
+                                android:textColor="@android:color/darker_gray"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+
+
+                    </RelativeLayout>
 
                 </RelativeLayout>
 
-                <FrameLayout
-                    android:id="@+id/comment_holder"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_weight="8.5"
-                    android:background="@drawable/comment_bubble">
-
-                    <TextView
-                        android:id="@+id/comments_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="10dp"
-                        android:gravity="center"
-                        android:text="167"
-                        android:textColor="@android:color/darker_gray" />
-                </FrameLayout>
             </LinearLayout>
 
 

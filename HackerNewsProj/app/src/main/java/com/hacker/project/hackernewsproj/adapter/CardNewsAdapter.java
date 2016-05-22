@@ -34,7 +34,13 @@ public class CardNewsAdapter extends RecyclerView.Adapter<CardHolder> {
         activity = (MainActivity) mContext;
     }
 
+    public void clearData() {
+        mLinks = null;
+    }
+
     public void addData(JsonData newData) {
+        if(mLinks == null)
+            mLinks = new ArrayList<>();
         mLinks.add(newData);
     }
 
@@ -58,21 +64,30 @@ public class CardNewsAdapter extends RecyclerView.Adapter<CardHolder> {
     @Override
     public void onBindViewHolder(CardHolder holder, int position) {
 
-        holder.urlHolder.setTag(position);
-        holder.newsTitleTV.setTag(position);
-        holder.commentHolder.setTag(position);
+        if (position == mLinks.size()) {
+            holder.cardHolder.setVisibility(View.GONE);
+            holder.clickToLoad.setVisibility(View.VISIBLE);
+            holder.clickToLoad.setOnClickListener(activity);
+        } else {
 
-        holder.urlHolder.setOnClickListener(activity);
-        holder.newsTitleTV.setOnClickListener(activity);
-        holder.commentHolder.setOnClickListener(activity);
+            holder.cardHolder.setVisibility(View.VISIBLE);
+            holder.clickToLoad.setVisibility(View.GONE);
+            holder.urlHolder.setTag(position);
+            holder.newsTitleTV.setTag(position);
+            holder.commentsTV.setTag(position);
 
-        fillData(holder, position);
+            holder.urlHolder.setOnClickListener(activity);
+            holder.newsTitleTV.setOnClickListener(activity);
+            holder.commentsTV.setOnClickListener(activity);
+
+            fillData(holder, position);
+        }
     }
 
     @Override
     public int getItemCount() {
         if (mLinks != null && mLinks.size() > 0)
-            return mLinks.size();
+            return mLinks.size() + 1;
         else
             return 0;
     }
