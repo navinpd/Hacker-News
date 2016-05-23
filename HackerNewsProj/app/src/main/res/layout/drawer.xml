@@ -11,49 +11,22 @@
     <LinearLayout
         android:id="@+id/detail_ll"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
-        android:gravity="center_vertical"
+        android:layout_height="56dp"
+        android:background="@color/colorPrimary"
         android:orientation="horizontal"
         android:visibility="visible">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/iv_profile_pic"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="10dp"
-            android:src="@drawable/friend_new"
-            android:visibility="gone" />
-
-        <LinearLayout
+        <TextView
+            android:id="@+id/tv_name"
+            style="@style/sideMenuTxtStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:text="CURRENT NEWS"
+            android:textSize="18sp"
+            android:textColor="@android:color/white"
+            android:gravity="center_vertical"
+            android:textStyle="bold" />
 
-
-            <TextView
-                android:id="@+id/tv_name"
-                style="@style/sideMenuTxtStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="22dp"
-                android:text="Navin Prasad"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tv_address"
-                style="@style/sideMenuTxtStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="0dp"
-                android:text="London United Kingdom"
-                android:visibility="gone" />
-
-        </LinearLayout>
     </LinearLayout>
 
     <ScrollView
@@ -130,30 +103,6 @@
                 <!--android:drawableLeft="@drawable/side_faq"-->
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/ll_submit"
-                style="@style/sideMenuItemMargin">
-
-                <TextView
-                    android:id="@+id/tv_submit"
-                    style="@style/sideMenuTxtStyle"
-                    android:text="@string/submit" />
-
-                <!--android:drawableLeft="@drawable/side_contact"-->
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/ll_logout"
-                android:visibility="gone"
-                style="@style/sideMenuItemMargin">
-
-                <TextView
-                    android:id="@+id/tv_log_out"
-                    style="@style/sideMenuTxtStyle"
-                    android:text="@string/log_out" />
-                <!--android:drawableLeft="@drawable/side_logout"-->
-
-            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 

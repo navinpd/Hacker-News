@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import com.hacker.project.hackernewsproj.R;
 import com.hacker.project.hackernewsproj.activity.CommentsActivity;
 import com.hacker.project.hackernewsproj.data.JsonData;
-import com.hacker.project.hackernewsproj.data.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +52,8 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentHolder> {
             return;
 
         holder.time.setText(mLinks.get(position).getTime());
-        holder.comment.setText(Html.fromHtml(mLinks.get(position).getText()).toString());
+        if (mLinks.get(position).getText() != null)
+            holder.comment.setText(Html.fromHtml(mLinks.get(position).getText()).toString());
         holder.author.setText(mLinks.get(position).getBy());
     }
 

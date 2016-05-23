@@ -1,5 +1,8 @@
 package com.hacker.project.hackernewsproj.data;
 
+import android.content.res.Resources;
+import android.util.TypedValue;
+
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -32,5 +35,14 @@ public class Utils {
             return TimeUnit.MILLISECONDS.toSeconds(now.getTime() - past.getTime()) + "s";
         }
     }
+
+    /**
+     * Convert Dp to Pixel
+     */
+    public static int dpToPx(float dp, Resources resources) {
+        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.getDisplayMetrics());
+        return (int) px;
+    }
+
 
 }

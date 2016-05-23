@@ -17,7 +17,6 @@ public class BaseActivity extends AppCompatActivity {
     public static final String SHOW = "showstories";
     public static final String ASK = "askstories";
     public static final String JOBS = "jobstories";
-    public static final String COMMENTS = "comments";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

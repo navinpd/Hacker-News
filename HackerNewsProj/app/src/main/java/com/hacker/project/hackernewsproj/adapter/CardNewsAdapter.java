@@ -82,6 +82,12 @@ public class CardNewsAdapter extends RecyclerView.Adapter<CardHolder> {
 
             fillData(holder, position);
         }
+
+        if(position == 442) {
+            holder.cardHolder.setVisibility(View.GONE);
+            holder.clickToLoad.setVisibility(View.GONE);
+        }
+
     }
 
     @Override

@@ -69,7 +69,7 @@ public class FullNewsActivity extends BaseActivity {
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             progressDialog = new ProgressDialog(FullNewsActivity.this);
             progressDialog.setMessage("Loading");
-            progressDialog.setCancelable(false);
+            progressDialog.setCancelable(true);
             progressDialog.show();
             super.onPageStarted(view, url, favicon);
 

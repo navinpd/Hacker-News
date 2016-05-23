@@ -6,10 +6,11 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -23,8 +24,6 @@ import com.hacker.project.hackernewsproj.data.Utils;
 
 import org.androidannotations.annotations.EActivity;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,17 +34,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private ImageView refreshImage;
+    private TextView titleText;
 
     private LinearLayout hackerNewsLayout;
     private LinearLayout newsLayout;
     private LinearLayout showLayout;
     private LinearLayout askLayout;
     private LinearLayout jobsLayout;
-    private LinearLayout submitLayout;
-    private LinearLayout logOutLayout;
 
     private DrawerLayout mDrawerLayout;
     private View mDrawer;
+    private TextView noStories;
 
     private Firebase preURL;
     private Firebase mainURL;
@@ -62,16 +62,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_main);
-
+        setUpLayout();
 
         headerType = getIntent().getStringExtra(DATA_TYPE);
         if (headerType == null || headerType.isEmpty())
             headerType = "topstories";
 
-        headerText = headerType.substring(0, headerType.length() - "substories".length());
-
-        setUpLayout();
+        headerText = headerType.substring(0, headerType.length() - "stories".length()).toUpperCase();
+        titleText.setText("Hacker News " + headerText);
 
         preURL = new Firebase(Constants.BASE_URL);
         mainURL = preURL.child("/" + headerType);
@@ -91,25 +91,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-//        menu.getItem(0).getSubMenu().getItem(4).setVisible(true);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_refresh) {
-            submissionIDs = null;
-            loadedSubmissions = 0;
-            ((CardNewsAdapter) mAdapter).clearData();
-            updateSubmissions();
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     public void updateSubmissions() {
         if (submissionIDs == null) {
             progressDialog.show();
@@ -123,17 +104,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     // Because we are doing this asynchronously, it's easier to update submissions directly
                     updateSubmissions();
 
-                    // Hide the progress bar
+                    noStories.setVisibility(View.GONE);
                     progressDialog.dismiss();
-//                    footer.setVisibility(View.VISIBLE);
+                    mRecyclerView.setVisibility(View.VISIBLE);
                 }
 
                 @Override
                 public void onCancelled(FirebaseError firebaseError) {
                     System.err.println("Could not retrieve posts! " + firebaseError);
-//                    no_submissions.setVisibility(View.VISIBLE);
-//                    progress.setVisibility(View.GONE);
-//                    footer.setVisibility(View.GONE);
+                    noStories.setVisibility(View.VISIBLE);
+                    progressDialog.dismiss();
+                    mRecyclerView.setVisibility(View.GONE);
                 }
             });
         } else {
@@ -148,16 +129,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         // From the top 500 submissions, we only load a few at a time
         for (; loadedSubmissions < start + submissionUpdateNum && loadedSubmissions < submissionIDs.size(); loadedSubmissions++) {
-            // But we must first add each submission to the view manually
+            // Add each submission to the view manually
             updateSingleSubmission(submissionIDs.get(loadedSubmissions));
         }
 
-//            if (loadedSubmissions == submissionIDs.size()) {
-//                no_submissions.setVisibility(View.VISIBLE);
-//            }
     }
 
-    // Gets an url to a single submission and updates it in the feedadapter
     public void updateSingleSubmission(final Long submissionId) {
 
         Firebase submission = new Firebase("https://hacker-news.firebaseio.com/v0/item/" + submissionId);
@@ -173,26 +150,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     return;
                 }
 
-                String url = (String) ret.get("url");
-                URL site = null;
-
-                // If the url exists
-                if (url != null) {
-                    try {
-                        site = new URL(url);
-                    } catch (MalformedURLException e) {
-                        System.err.println("Malformed url: " + url);
-                    }
-                }
-
-                JsonData f = initNewFeedItem(submissionId, ret, site);
+                JsonData f = initNewFeedItem(submissionId, ret);
                 ((CardNewsAdapter) mAdapter).addData(f);
                 mAdapter.notifyDataSetChanged();
 
-//                if (site != null) {
-//                    // Asynchronously updates images for the feed item
-//                    updateSubmissionThumbnail(site.getHost(), f);
-//                }
             }
 
             @Override
@@ -203,7 +164,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     // Takes the raw API data and the URL, returns a new feed item
-    public JsonData initNewFeedItem(Long submissionId, Map<String, Object> ret, URL site) {
+    public JsonData initNewFeedItem(Long submissionId, Map<String, Object> ret) {
 
         JsonData f = new JsonData();
 
@@ -219,6 +180,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         f.setBy((String) ret.get("by"));
         f.setScore((Long) ret.get("score"));
         f.setTime(time);
+        f.setUrl((String) ret.get("url"));
 
         // Jobs stories don't have any descendants, we need to take care of that
         Object descendantObject = ret.get("descendants");
@@ -228,23 +190,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             System.err.println("Null descendants: " + ret.get("title"));
             f.setDescendants(0L);
         }
-
-        // Hacker News site urls are null
-        if (site != null) {
-            String domain = site.getHost().replace("www.", "");
-//            f.setShortUrl(domain);
-            f.setUrl(site.toString());
-//            f.setLetter(domain.substring(0, 1));
-//        } else {
-//            // The hacker news submissions don't technically have an url, so we cheat
-//            f.setShortUrl("Hacker News");
-//            f.setLetter("HN");
-        }
-
-        // Generate TextDrawable thumbnail
-//        TextDrawable.IShapeBuilder builder = TextDrawable.builder().beginConfig().bold().toUpperCase().endConfig();
-//        TextDrawable drawable = builder.buildRect(f.getLetter(), f.getColor());
-//        f.setTextDrawable(drawable);
 
         return f;
     }
@@ -274,12 +219,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.ll_show:
                 intent.putExtra(DATA_TYPE, SHOW);
                 break;
-            case R.id.ll_submit:
-//                intent.putExtra(DATA_TYPE, SUBMI);
-                break;
-            case R.id.ll_logout:
-//                intent.putExtra(DATA_TYPE, LOG);
-                break;
             case R.id.comment_holder:
                 intent = new Intent(MainActivity.this, CommentsActivity.class);
                 Bundle bundle = new Bundle();
@@ -294,14 +233,31 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             case R.id.url_holder:
             case R.id.news_title_tv:
-                intent = new Intent(MainActivity.this, FullNewsActivity.class);
-                intent.putExtra("URL", ((CardNewsAdapter) mAdapter).getURL(position));
+                if (((CardNewsAdapter) mAdapter).getURL(position) != null && !((CardNewsAdapter) mAdapter).getURL(position).isEmpty()) {
+                    intent = new Intent(MainActivity.this, FullNewsActivity.class);
+                    intent.putExtra("URL", ((CardNewsAdapter) mAdapter).getURL(position));
+                } else {
+                    intent = null;
+                    Toast.makeText(MainActivity.this, "No URL", Toast.LENGTH_SHORT).show();
+                }
                 break;
 
-            case R.id.click_to_load:
+            case R.id.load_more:
                 intent = null;
                 loadSubmissions();
                 break;
+            case R.id.drawermenu:
+                intent = null;
+                mDrawerLayout.openDrawer(mDrawer);
+                break;
+            case R.id.menu_refresh:
+                intent = null;
+                submissionIDs = null;
+                loadedSubmissions = 0;
+                ((CardNewsAdapter) mAdapter).clearData();
+                updateSubmissions();
+                break;
+
 
         }
         if (intent != null) {
@@ -326,6 +282,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void setUpLayout() {
+        refreshImage = (ImageView) findViewById(R.id.menu_refresh);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawer = findViewById(R.id.navigation_drawer);
         hackerNewsLayout = (LinearLayout) findViewById(R.id.ll_hacker_news);
@@ -333,10 +290,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         showLayout = (LinearLayout) findViewById(R.id.ll_show);
         askLayout = (LinearLayout) findViewById(R.id.ll_ask);
         jobsLayout = (LinearLayout) findViewById(R.id.ll_job);
-        submitLayout = (LinearLayout) findViewById(R.id.ll_submit);
-        logOutLayout = (LinearLayout) findViewById(R.id.ll_logout);
         mRecyclerView = (RecyclerView) findViewById(R.id.news_list);
         mDrawer = (View) findViewById(R.id.navigation_drawer);
+        noStories = (TextView) findViewById(R.id.no_stories_tv);
+        titleText = (TextView) findViewById(R.id.header_text);
         progressDialog = new ProgressDialog(MainActivity.this);
         progressDialog.setMessage("Loading");
         progressDialog.setCancelable(false);
@@ -346,8 +303,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         showLayout.setOnClickListener(this);
         askLayout.setOnClickListener(this);
         jobsLayout.setOnClickListener(this);
-        submitLayout.setOnClickListener(this);
-        logOutLayout.setOnClickListener(this);
+        refreshImage.setOnClickListener(this);
 
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);

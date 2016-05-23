@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -93,9 +92,6 @@ public class CommentsActivity extends BaseActivity {
             updateSingleSubmission(commentIds.get(loadedSubmissions));
         }
 
-//            if (loadedSubmissions == commentIds.size()) {
-//                no_submissions.setVisibility(View.VISIBLE);
-//            }
     }
 
     public void updateSingleSubmission(final Long submissionId) {
@@ -177,12 +173,6 @@ public class CommentsActivity extends BaseActivity {
 
         layoutManager = new LinearLayoutManager(this);
         commentsList.setLayoutManager(layoutManager);
-        commentsList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-            }
-        });
 
         mAdapter = new CommentsAdapter(CommentsActivity.this, null);
         commentsList.setAdapter(mAdapter);
